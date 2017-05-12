@@ -1,21 +1,22 @@
 # -*- encoding:UTF-8 -*-
-from os.path import join, abspath
+from os.path import join, abspath, dirname, exists
 import sys
 
 class GlobalVariable(object):
-    print sys.argv[0]
 
-    working_directory = join(p)
+    working_directory = abspath(dirname(sys.argv[0]))
 
-    host_utils = join(working_directory, 'repository', 'HostUtils')
-    target_utils = join(working_directory, 'repository', 'TargetUtils')
+    resource_folder = join(working_directory, 'resource')
+
+    host_utils = join(resource_folder, 'HostUtils')
+    target_utils = join(resource_folder, 'TargetUtils')
 
     adb_exe = join(host_utils, 'sdk_tools', 'adb.exe')
     aapt_exe = join(host_utils, 'sdk_tools', 'adb.exe')
     fastboot_exe = join(host_utils, 'sdk_tools', 'fastboot.exe')
 
-    uiautomator_jar = 'C:\\Development\\Work\\wuyou_work1\\UiTest\\bin\\Demo.jar'
-
+    test_policy = 'random'
+    test_loop = ''
 
 if __name__ == '__main__':
     print GlobalVariable.host_utils
