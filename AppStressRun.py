@@ -1,6 +1,9 @@
 ﻿#-*- encoding:UTF-8 -*-
 __author__ = 'wuyou'
-import sys,os,time
+import sys
+import os
+import time
+from libs.GlobalVariable import GlobalVariable
 reload(sys)
 sys.setdefaultencoding('utf-8')
 from xml.dom.minidom import Document
@@ -42,32 +45,6 @@ class CreatDir():
         os.makedirs('%s\%s\Host' %(QGP_Path().PATH_LOGS,name))
 
 
-#获取手机信息
-class ADB_getValue():
-    def __init__(self):
-        # wuyou:以下参数均可以自己定义增加修改
-        self.product_Model = self.getValue('ro.product.model', serial_number)
-        self.product_Name = self.getValue('ro.product.name', serial_number)
-        self.build_Fingerprint = self.getValue('ro.build.fingerprint', serial_number)
-        self.version_AU = self.getValue('ro.build.au_rev', serial_number)
-        self.version_Meta = self.getValue('gsm.version.baseband', serial_number)
-        self.version_SDK = self.getValue('ro.build.version.sdk', serial_number)
-        self.version_Release = self.getValue('ro.build.version.release', serial_number)
-
-
-    def assignmentValue(self,serial_number):
-        #对参数赋值
-        self.product_Model = self.getValue('ro.product.model', serial_number)
-        self.product_Name = self.getValue('ro.product.name', serial_number)
-        self.build_Fingerprint = self.getValue('ro.build.fingerprint', serial_number)
-        self.version_AU = self.getValue('ro.build.au_rev', serial_number)
-        self.version_Meta = self.getValue('gsm.version.baseband', serial_number)
-        self.version_SDK = self.getValue('ro.build.version.sdk', serial_number)
-        self.version_Release = self.getValue('ro.build.version.release', serial_number)
-
-    def getValue(self, cmd, serialno):
-        #格式化输入输出
-        return os.popen('adb -s %s shell getprop %s' % (serialno,cmd)).read().strip('\r\n')
 
 #获取连接的所有手机的serialno
 class DevicesList():
@@ -431,119 +408,6 @@ class MainTest():
 
         else:
             print 'please check the information'
-class outputFormat():
-    def __init__(self):
-        pass
-    def setValue2Zero(self):
-        self.newCaseFlag = False
-        self.classPass=0
-        self.classFail=0
-        self.packagePass=0
-        self.packageFail=0
-    def setClassValue2Zero(self):
-        self.newCaseFlag = False
-        self.classPass=0
-        self.classFail=0
-
-    def dicPart(self,logPart):
-        test={}
-        a=[]
-        for x in range(len(logPart)):
-            if 'INSTRUMENTATION_STATUS: test' in logPart[x]:
-                test['test']=logPart[x][29:].strip('\r\n')
-            elif  'INSTRUMENTATION_STATUS: stack' in logPart[x]:
-                test['stack']=logPart[x][30:].strip('\r\n')
-                for y in range(len(logPart)-x-1):
-                    if '	at' in logPart[y+x+1]:
-                        a.append(logPart[y+x+1].strip('\t'))
-                    else:
-                        break
-                test['FailReason']=a
-            elif  'INSTRUMENTATION_STATUS_CODE:' in logPart[x]:
-                test['CODE']=logPart[x][29:].strip('\r\n')
-        return test
-
-    def lineFormat(self,Part):
-        t=TimeFormat()
-        DirPart=self.dicPart(Part)
-        if len(DirPart)==1:
-            pass
-        else:
-            if DirPart.get('CODE') == '1':
-                pass
-            elif DirPart.get('CODE') == '0':
-                print '%s /%s:  %s      ---pass' %(t.getLogResultTime(),serial_number,DirPart.get('test')[4:])
-                self.classPass+=1
-                self.packagePass+=1
-
-            elif DirPart.get('CODE') == '-1'or DirPart.get('CODE') == '-2':
-                print '%s /%s:  %s      ---fail' %(t.getLogResultTime(),serial_number,DirPart.get('test')[4:])
-                print '***FailReason:  %s' %DirPart.get('stack')
-                FailReason=DirPart.get('FailReason')
-                for reason in FailReason:
-                    time.sleep(0.1)
-                    print '******%s' %reason.strip('\r\r\n')
-                self.classFail+=1
-                self.packageFail+=1
-        # if 'INSTRUMENTATION_STATUS: test' in line:
-        #     self.testCase=line[33:].strip('\r\n')
-        #     self.newCaseFlag=True
-        # elif 'INSTRUMENTATION_STATUS_CODE: 1' in line:
-        #     pass
-        # elif 'INSTRUMENTATION_STATUS_CODE: 0' in line and self.newCaseFlag==True:
-        #     print '%s /%s:  %s: Pass' %(t.getLogResultTime(),serial_number,self.testCase)
-        #     self.newCaseFlag=False
-        #     self.classPass+=1
-        #     self.packagePass+=1
-        # elif 'INSTRUMENTATION_STATUS_CODE: -2' in line and self.newCaseFlag==True:
-        #     print '%s /%s:  %s: Fail' %(t.getLogResultTime(),serial_number,self.testCase)
-        #     self.newCaseFlag=False
-        #     self.classFail+=1
-        #     self.packageFail+=1
-        #
-        # elif 'INSTRUMENTATION_STATUS_CODE: -1' in line and self.newCaseFlag==True:
-        #     print '%s /%s:  %s: Fail' %(t.getLogResultTime(),serial_number,self.testCase)
-        #     self.newCaseFlag=False
-        #     self.classFail+=1
-        #     self.packageFail+=1
-
-    def PackageStartFormat(self,packageName):
-        t=TimeFormat()
-        time.sleep(0.3)
-        print '%s /%s:  -----------------------------------------------------------------------------' %(t.getLogResultTime(),serial_number)
-        time.sleep(0.3)
-        print '%s /%s:  Test package %s started' %(t.getLogResultTime(),serial_number,packageName)
-
-    def ClassStartFormat(self,className):
-        t=TimeFormat()
-        time.sleep(0.3)
-        print '%s /%s:  -----------------------------------------------------------------------------'%(t.getLogResultTime(),serial_number)
-        time.sleep(0.3)
-        print '%s /%s:  Test class %s started' %(t.getLogResultTime(),serial_number,className)
-        time.sleep(0.3)
-        print '%s /%s:  -----------------------------------------------------------------------------'%(t.getLogResultTime(),serial_number)
-    def ClassEndFormat(self,className):
-        t=TimeFormat()
-        time.sleep(0.3)
-        print '%s /%s:  -----------------------------------------------------------------------------'%(t.getLogResultTime(),serial_number)
-        time.sleep(0.3)
-        print '%s /%s:  %s class complete: Passed %s, Failed %s'%(t.getLogResultTime(),serial_number,className,self.classPass,self.classFail)
-
-
-    def PackageEndFormat(self,packageName):
-        t=TimeFormat()
-        time.sleep(0.3)
-        print '%s /%s:  -----------------------------------------------------------------------------'%(t.getLogResultTime(),serial_number)
-        time.sleep(0.3)
-        print '%s /%s:  %s package complete: Passed %s, Failed %s' %(t.getLogResultTime(),serial_number,packageName,self.packagePass,self.packageFail)
-        time.sleep(0.3)
-        print '%s /%s:  -----------------------------------------------------------------------------'%(t.getLogResultTime(),serial_number)
-    def End(self):
-        t=TimeFormat()
-        time.sleep(0.3)
-        print '%s /%s:  All tests have been completed.Please check the test report' %(t.getLogResultTime(),serial_number)
-        time.sleep(0.3)
-        print '%s /%s:  -----------------------------------------------------------------------------'%(t.getLogResultTime(),serial_number)
 
 class TimeFormat():
     def __init__(self):
@@ -765,8 +629,7 @@ class Result():
 
 if __name__ == "__main__":
     app = wx.App()
-    f=Frame()
+    f = Frame()
     f.Show()
-
     app.MainLoop()
 

@@ -1,11 +1,11 @@
-__author__ = 'c_youwu'
 # -*- encoding:UTF-8 -*-
-from os.path import join
-
+from os.path import join, abspath
+import sys
 
 class GlobalVariable(object):
+    print sys.argv[0]
 
-    working_directory = 'C:\\Git\\UiTest'
+    working_directory = join(p)
 
     host_utils = join(working_directory, 'repository', 'HostUtils')
     target_utils = join(working_directory, 'repository', 'TargetUtils')
