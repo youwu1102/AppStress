@@ -1,6 +1,7 @@
 # -*- encoding:UTF-8 -*-
 from os import listdir
 from os.path import isdir, join
+from GlobalVariable import GlobalVariable
 
 
 class TestCaseTree(object):
@@ -21,36 +22,23 @@ class TestCaseTree(object):
         tree_root = tree.GetRootItem()
         (item, cookie) = tree.GetFirstChild(tree_root)
         for x in xrange(tree.GetChildrenCount(tree_root)):
-            if tree.GetItemText(item).endwith('.xml') and tree.IsItemChecked(item):
-                tmp = []
-                while tree.GetItemParent(item):
-                    item = tree.GetItemParent(item)
-                    tmp.append(item)
-                    TestSuite=self.getSelectCasePath(item, tree)
+            if tree.GetItemText(item).endswith('.xml') and tree.IsItemChecked(item):
+                case_list.append(TestCaseTree.__get_case_path(item=item, tree=tree))
+            item = tree.GetNext(item)
+        return case_list
 
-                item=tree.GetNext(item)
+    @staticmethod
+    def __get_case_path(item, tree):
+        tmp = []
+        case_path = GlobalVariable.cases_folder
+        while tree.GetItemParent(item):
+            tmp.append(tree.GetItemText(item))
+            item = tree.GetItemParent(item)
+        for x in tmp[::-1]:
+            case_path = join(case_path, x)
+        return case_path
 
-
-    # def getTreeSelect(self,Tree):
-    #     TestCase=[]
-    #     treeRoot = Tree.GetRootItem()
-    #     (item,cookie) = Tree.GetFirstChild(treeRoot)
-    #     for x in range(Tree.GetChildrenCount(treeRoot)):
-    #         if Tree.GetItemText(item)[-4:] == '.txt':
-    #             TestSuite=self.getSelectCasePath(item,Tree)
-    #             if TestSuite != []:
-    #                 TestCase.append(TestSuite)
-    #         item=Tree.GetNext(item)
-    #     return TestCase
-    #
-    # def getSelectCasePath(self,item,Tree):
-    #     path=[]
-    #     if Tree.IsItemChecked(item):
-    #         while Tree.GetItemParent(item):
-    #             path.append(Tree.GetItemText(item))
-    #             item=Tree.GetItemParent(item)
-    #     path.reverse()
-    #     return path
+    
     # def setTreeSelect(self,Tree,testplan):
     #     PLAN = TestCasePlan()
     #     treeRoot = Tree.GetRootItem()

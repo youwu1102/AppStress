@@ -25,22 +25,22 @@ class Frame(wx.Frame):
         self.test_case_tree_root = self.test_case_tree.AddRoot('TestCase')
         TestCaseTree.append_test_case(tree=self.test_case_tree, parent=self.test_case_tree_root, case_path=GlobalVariable.cases_folder)
         self.test_case_tree_root.Expand()
-       # TREE.showTestCase(self.TestCase_TREE,self.TestCase_TREE_ROOT,QGP.PATH_TESTCASES)
         #---------树模块结束
-        self.Left_Above_Box = wx.BoxSizer( wx.HORIZONTAL)#左下界面，import和outport
+
+        self.left_above_box = wx.BoxSizer( wx.HORIZONTAL)#左下界面，import和outport
         #---------左下界面模块开始
 
-        self.Import_Button = wx.Button(self.panel,-1,'Import',size=(-1,50))#导入XML按钮
-#        self.Bind(wx.EVT_BUTTON, self.OnImport, self.Import_Button)
-        self.Export_Button = wx.Button(self.panel,-1,'Export',size=(-1,50))#导出选项到XML按钮
-        #self.Bind(wx.EVT_BUTTON, self.OnExport, self.Export_Button)
+        self.import_button = wx.Button(self.panel, -1, 'Import', size=(-1,50))#导入XML按钮
+        self.Bind(wx.EVT_BUTTON, self.on_import, self.import_button)
+        self.export_button = wx.Button(self.panel, -1, 'Export', size=(-1,50))#导出选项到XML按钮
+        self.Bind(wx.EVT_BUTTON, self.on_export, self.export_button)
 
-        self.Left_Above_Box.Add(self.Import_Button,1,wx.EXPAND)
-        self.Left_Above_Box.Add(self.Export_Button,1,wx.EXPAND)
+        self.left_above_box.Add(self.import_button, 1 ,wx.EXPAND)
+        self.left_above_box.Add(self.export_button, 1, wx.EXPAND)
 
         #---------左下界面模块结束
-        self.left_box.Add(self.test_case_tree,1,wx.EXPAND)
-        self.left_box.Add(self.Left_Above_Box,0,wx.EXPAND)
+        self.left_box.Add(self.test_case_tree, 1, wx.EXPAND)
+        self.left_box.Add(self.left_above_box, 0, wx.EXPAND)
 
 
         #左边界面模块结束
@@ -65,7 +65,7 @@ class Frame(wx.Frame):
 #        serial_number = self.Device_Box.GetItemLabel(self.Device_Box.Selection)
 
         self.Start_Button = wx.Button(self.panel,-1,'START',size=(-1,40))#开始运行
-#        self.Bind(wx.EVT_BUTTON, self.OnStart, self.Start_Button)
+        self.Bind(wx.EVT_BUTTON, self.OnStart, self.Start_Button)
         self.Result_Button = wx.Button(self.panel,-1,'RESULT',size=(-1,40))#打开报告
        # self.Bind(wx.EVT_BUTTON, self.OnResult, self.Result_Button)
         self.Stop_Button = wx.Button(self.panel,-1,'STOP',size=(-1,40))#停止运行
@@ -108,62 +108,55 @@ class Frame(wx.Frame):
     #
     #
     # planName = 'testplan'
-    # def OnStart(self,event):
-    #     TREE = TestCaseTree()
-    #     Main=MainTest()
-    #     serial_number = self.Device_Box.GetItemLabel(self.Device_Box.Selection)
-    #     if TREE.getTreeSelect(self.TestCase_TREE) == []:
-    #         print 'Please select some test case'
-    #     else:
-    #         self.getPLANwirteJAVA(self.planName)
-    #         Thread_Test = threading.Thread(target=Main.main)
-    #         Thread_Test.start()
-    #     self.planName='testplan'
-    #
-    # def OnExport(self,event):
-    #     QGP=QGP_Path()
-    #     TREE = TestCaseTree()
-    #     PLAN = TestCasePlan()
-    #     if TREE.getTreeSelect(self.TestCase_TREE) != []:
-    #         dlg = wx.FileDialog(self,
-    #                             message="Save Test Plan",
-    #                             wildcard="Test Plan (*.xml)|*.xml|All files (*.*)|*.*",
-    #                             defaultDir=QGP.PATH_PLANS,
-    #                             style=wx.SAVE
-    #                             )
-    #         if dlg.ShowModal() == wx.ID_OK:
-    #             paths = dlg.GetPaths()
-    #             for path in paths:
-    #                 plan_name = path[len(QGP.PATH_PLANS)+1:-4]
-    #                 file_name = path
-    #             DOC=PLAN.establishTestPlan(TREE.getTreeSelect(self.TestCase_TREE),TestPlanName=plan_name)
-    #             file=open(file_name,'w')
-    #             file.write(DOC.toprettyxml(indent = '',encoding='utf-8'))
-    #             file.close()
-    #         dlg.Destroy()
-    #     else:
-    #         print 'Please select some Test Case'
-    #
-    # def OnImport(self,event):
-    #     QGP=QGP_Path()
-    #     TREE = TestCaseTree()
-    #     PLAN = TestCasePlan()
-    #     dlg = wx.FileDialog(self,
-    #                         message="Select Test Plan",
-    #                         wildcard="Test Plan (*.xml)|*.xml|All files (*.*)|*.*",
-    #                         defaultDir=QGP.PATH_PLANS,
-    #                         style=wx.OPEN
-    #                         )
-    #     if dlg.ShowModal() == wx.ID_OK:
-    #         filename=""
-    #         paths = dlg.GetPaths()
-    #         for path in paths:
-    #             filename=filename+path
-    #     dlg.Destroy()
-    #     aaa = filename[len(QGP.PATH_PLANS)+1:-4]
-    #
-    #     TREE=TestCaseTree()
-    #     TREE.setTreeSelect(self.TestCase_TREE,aaa)
+    def OnStart(self,event):
+        TestCaseTree.get_tree_select(tree=self.test_case_tree)
+        # TREE = TestCaseTree()
+        # Main=MainTest()
+        # serial_number = self.Device_Box.GetItemLabel(self.Device_Box.Selection)
+        # if TREE.getTreeSelect(self.TestCase_TREE) == []:
+        #     print 'Please select some test case'
+        # else:
+        #     self.getPLANwirteJAVA(self.planName)
+        #     Thread_Test = threading.Thread(target=Main.main)
+        #     Thread_Test.start()
+        # self.planName='testplan'
+
+    def on_export(self, event):
+        test_cases = TestCaseTree.get_tree_select(self.test_case_tree)
+        if test_cases:
+            dlg = wx.FileDialog(self,
+                                message="Save Test Plan",
+                                wildcard="Test Plan (*.xml)|*.xml|All files (*.*)|*.*",
+                                defaultDir=GlobalVariable.plans_folder,
+                                style=wx.SAVE
+                                )
+            if dlg.ShowModal() == wx.ID_OK:
+                xml_path = dlg.GetPaths()[0]
+
+                DOC=PLAN.establishTestPlan(TREE.getTreeSelect(self.TestCase_TREE),TestPlanName=plan_name)
+                file=open(file_name,'w')
+                file.write(DOC.toprettyxml(indent = '',encoding='utf-8'))
+                file.close()
+            dlg.Destroy()
+        else:
+            print 'Please select some Test Case'
+
+
+    def on_import(self, event):
+        dlg = wx.FileDialog(self,
+                            message="Select Test Plan",
+                            wildcard="Test Plan (*.xml)|*.xml|All files (*.*)|*.*",
+                            defaultDir=GlobalVariable.plans_folder,
+                            style=wx.OPEN
+                            )
+        if dlg.ShowModal() == wx.ID_OK:
+            filename=""
+            paths = dlg.GetPaths()
+            for path in paths:
+                filename=filename+path
+        dlg.Destroy()
+        TestCaseTree.set_tree_select(tree=self.test_case_tree, config=filename)
+
     #
     #
     #
