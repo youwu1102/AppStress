@@ -14,20 +14,15 @@ class Frame(wx.Frame):
         wx.Frame.__init__(self, None, -1, title="China App Stress",size = (1000,600))
         self.Center()
         self.panel = wx.Panel(self, -1)
-
-
-        self.Main_Box = wx.BoxSizer( wx.HORIZONTAL)#整个界面，水平布局
-        self.Left_Box = wx.BoxSizer( wx.VERTICAL)#左边界面，主要放置 Tree和PLAN的导入导出
-        self.Right_Box = wx.BoxSizer( wx.VERTICAL)#右边界面，主要放置 文本输出和基本按键
-
+        self.main_box = wx.BoxSizer( wx.HORIZONTAL)#整个界面，水平布局
+        self.left_box = wx.BoxSizer( wx.VERTICAL)#左边界面，主要放置 Tree和PLAN的导入导出
+        self.right_box = wx.BoxSizer( wx.VERTICAL)#右边界面，主要放置 文本输出和基本按键
 
         #左边界面模块开始
         #---------树模块开始
-        self.TestCase_TREE = CT.CustomTreeCtrl(self.panel,agwStyle=wx.TR_DEFAULT_STYLE|CT.TR_AUTO_CHECK_PARENT|CT.TR_AUTO_CHECK_CHILD)
-        self.TestCase_TREE_ROOT = self.TestCase_TREE.AddRoot('TestCase')
-        self.TestCase_TREE_ROOT.Expand()
-
-
+        self.test_case_tree = CT.CustomTreeCtrl(self.panel, agwStyle=wx.TR_DEFAULT_STYLE | CT.TR_AUTO_CHECK_PARENT | CT.TR_AUTO_CHECK_CHILD)
+        self.test_case_tree_root = self.test_case_tree.AddRoot('TestCase')
+        # self.test_case_tree_root.Expand()
        # TREE.showTestCase(self.TestCase_TREE,self.TestCase_TREE_ROOT,QGP.PATH_TESTCASES)
         #---------树模块结束
         self.Left_Above_Box = wx.BoxSizer( wx.HORIZONTAL)#左下界面，import和outport

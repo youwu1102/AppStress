@@ -7,6 +7,7 @@ class GlobalVariable(object):
     working_directory = abspath(dirname(sys.argv[0]))
 
     resource_folder = join(working_directory, 'resource')
+    resource_folder = join(working_directory, 'resource')
 
     host_utils = join(resource_folder, 'HostUtils')
     target_utils = join(resource_folder, 'TargetUtils')
@@ -16,7 +17,9 @@ class GlobalVariable(object):
     fastboot_exe = join(host_utils, 'sdk_tools', 'fastboot.exe')
 
     test_policy = 'random'
-    test_loop = ''
+    test_loop = 0
+    background_test = []
+
 
 if __name__ == '__main__':
     print GlobalVariable.host_utils
