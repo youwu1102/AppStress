@@ -1,10 +1,11 @@
-#-*- encoding:UTF-8 -*-
-__author__ = 'wuyou'
+# -*- encoding:UTF-8 -*-
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 import wx
 import wx.lib.agw.customtreectrl as CT
+from TestCaseTree import TestCaseTree
+from GlobalVariable import GlobalVariable
 
 
 
@@ -22,7 +23,8 @@ class Frame(wx.Frame):
         #---------树模块开始
         self.test_case_tree = CT.CustomTreeCtrl(self.panel, agwStyle=wx.TR_DEFAULT_STYLE | CT.TR_AUTO_CHECK_PARENT | CT.TR_AUTO_CHECK_CHILD)
         self.test_case_tree_root = self.test_case_tree.AddRoot('TestCase')
-        # self.test_case_tree_root.Expand()
+        TestCaseTree.append_test_case(tree=self.test_case_tree, parent=self.test_case_tree_root, case_path=GlobalVariable.cases_folder)
+        self.test_case_tree_root.Expand()
        # TREE.showTestCase(self.TestCase_TREE,self.TestCase_TREE_ROOT,QGP.PATH_TESTCASES)
         #---------树模块结束
         self.Left_Above_Box = wx.BoxSizer( wx.HORIZONTAL)#左下界面，import和outport
@@ -37,8 +39,8 @@ class Frame(wx.Frame):
         self.Left_Above_Box.Add(self.Export_Button,1,wx.EXPAND)
 
         #---------左下界面模块结束
-        self.Left_Box.Add(self.TestCase_TREE,1,wx.EXPAND)
-        self.Left_Box.Add(self.Left_Above_Box,0,wx.EXPAND)
+        self.left_box.Add(self.test_case_tree,1,wx.EXPAND)
+        self.left_box.Add(self.Left_Above_Box,0,wx.EXPAND)
 
 
         #左边界面模块结束
@@ -82,14 +84,14 @@ class Frame(wx.Frame):
 
 
         #------------右下显示模块结束
-        self.Right_Box.Add(self.multiText,1,wx.EXPAND)
-        self.Right_Box.Add(self.Right_Above_Box,0,wx.EXPAND)
+        self.right_box.Add(self.multiText,1,wx.EXPAND)
+        self.right_box.Add(self.Right_Above_Box,0,wx.EXPAND)
         #右边界面模块结束
 
 
-        self.Main_Box.Add(self.Left_Box,3,wx.EXPAND|wx.TOP|wx.LEFT|wx.BOTTOM,5)
-        self.Main_Box.Add(self.Right_Box,7,wx.EXPAND|wx.TOP|wx.RIGHT|wx.LEFT|wx.BOTTOM,5)
-        self.panel.SetSizer(self.Main_Box)
+        self.main_box.Add(self.left_box,3,wx.EXPAND|wx.TOP|wx.LEFT|wx.BOTTOM,5)
+        self.main_box.Add(self.right_box,7,wx.EXPAND|wx.TOP|wx.RIGHT|wx.LEFT|wx.BOTTOM,5)
+        self.panel.SetSizer(self.main_box)
 
     # def OnChoice(self,event):
     #     if self.Device_Box.GetItemLabel(self.Device_Box.Selection) == 'No Device':

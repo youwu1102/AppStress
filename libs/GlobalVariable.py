@@ -7,8 +7,8 @@ class GlobalVariable(object):
     working_directory = abspath(dirname(sys.argv[0]))
 
     resource_folder = join(working_directory, 'resource')
-    resource_folder = join(working_directory, 'resource')
-
+    repository_folder = join(working_directory, 'repository')
+    cases_folder = join(repository_folder, 'cases')
     host_utils = join(resource_folder, 'HostUtils')
     target_utils = join(resource_folder, 'TargetUtils')
 
