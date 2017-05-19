@@ -19,7 +19,7 @@ class RedirectText(object):
 
 class Frame(wx.Frame):
     def __init__(self):
-        wx.Frame.__init__(self, None, -1, title="China App Stress", size = (1000,600))
+        wx.Frame.__init__(self, None, -1, title="China App Stress", size=(1000, 600))
         self.Center()
         self.panel = wx.Panel(self, -1)
         self.main_box = wx.BoxSizer( wx.HORIZONTAL)#整个界面，水平布局
@@ -36,21 +36,17 @@ class Frame(wx.Frame):
 
         self.left_above_box = wx.BoxSizer( wx.HORIZONTAL)#左下界面，import和outport
         #---------左下界面模块开始
-
         self.import_button = wx.Button(self.panel, -1, 'Import', size=(-1,50))#导入XML按钮
         self.Bind(wx.EVT_BUTTON, self.on_import, self.import_button)
         self.export_button = wx.Button(self.panel, -1, 'Export', size=(-1,50))#导出选项到XML按钮
         self.Bind(wx.EVT_BUTTON, self.on_export, self.export_button)
-
-        self.left_above_box.Add(self.import_button, 1 ,wx.EXPAND)
+        self.left_above_box.Add(self.import_button, 1, wx.EXPAND)
         self.left_above_box.Add(self.export_button, 1, wx.EXPAND)
-
         #---------左下界面模块结束
         self.left_box.Add(self.test_case_tree, 1, wx.EXPAND)
         self.left_box.Add(self.left_above_box, 0, wx.EXPAND)
-
-
         #左边界面模块结束
+
 
         #右边界面模块开始
         #------------文本显示模块开始

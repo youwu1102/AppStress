@@ -1,7 +1,6 @@
 # -*- encoding:UTF-8 -*-
 __author__ = 'c_youwu'
 import threading
-import time
 from PrintInfo import Print
 
 
@@ -16,3 +15,4 @@ class TestExecution(threading.Thread):
         while True:
             for case in self.cases:
                 self.Print.info(self.device + case)
+

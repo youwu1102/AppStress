@@ -5,10 +5,12 @@ from GlobalVariable import GlobalVariable
 import os
 import re
 from time import sleep
+from xml.dom.minidom import parse
 
 class Utility(object):
 
     pid_expression = re.compile(r'\d+')
+
     @staticmethod
     def run_command_on_pc(cmd, except_result='', except_true=True, need_output=False):
         """
@@ -111,3 +113,10 @@ class Utility(object):
         cmd = '{adb} pull {remote} {local}'.format(adb=GlobalVariable.adb_exe, local=local, remote=remote)
         Utility.run_command_on_pc(cmd)
         sleep(1)
+
+    @staticmethod
+    def parse_case(case_path):
+        doc = parse(case_path)
+
+
+
