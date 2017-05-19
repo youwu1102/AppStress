@@ -8,6 +8,7 @@ class GlobalVariable(object):
 
     resource_folder = join(working_directory, 'resource')
     repository_folder = join(working_directory, 'repository')
+    log_folder = join(working_directory, 'log')
     cases_folder = join(repository_folder, 'cases')
     plans_folder = join(repository_folder, 'plans')
     host_utils = join(resource_folder, 'HostUtils')

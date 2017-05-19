@@ -10,10 +10,16 @@ from GlobalVariable import GlobalVariable
 from TestExecution import TestExecution
 
 
+class RedirectText(object):
+    def __init__(self, wx_text_ctrl):
+        self.out = wx_text_ctrl
+
+    def write(self, string):
+        wx.CallAfter(self.out.WriteText, string)
 
 class Frame(wx.Frame):
     def __init__(self):
-        wx.Frame.__init__(self, None, -1, title="China App Stress",size = (1000,600))
+        wx.Frame.__init__(self, None, -1, title="China App Stress", size = (1000,600))
         self.Center()
         self.panel = wx.Panel(self, -1)
         self.main_box = wx.BoxSizer( wx.HORIZONTAL)#整个界面，水平布局
@@ -48,10 +54,12 @@ class Frame(wx.Frame):
 
         #右边界面模块开始
         #------------文本显示模块开始
-        self.multiText = wx.TextCtrl(self.panel, -1, "", style=wx.TE_MULTILINE|wx.TE_READONLY)
-        self.multiText.SetInsertionPointEnd()
-#        self.redir=RedirectText(self.multiText)
-#        sys.stdout=self.redir
+        self.message_box = wx.TextCtrl(self.panel, -1, "",
+                                       style=wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL)
+        self.message_box.SetInsertionPointEnd()
+        redir = RedirectText(self.message_box)
+        sys.stdout = redir
+
         #------------文本显示模块结束
         self.Right_Above_Box = wx.BoxSizer( wx.HORIZONTAL)#右下界面模块，水平布局，主要包含 Devicelist 和StartButton
         self.Right_Above_Box_VERTICAL = wx.BoxSizer( wx.VERTICAL)#右下BUTTONBOX，垂直布局，主要包含 下面两个水平布局框架
@@ -84,7 +92,7 @@ class Frame(wx.Frame):
 
 
         #------------右下显示模块结束
-        self.right_box.Add(self.multiText,1,wx.EXPAND)
+        self.right_box.Add(self.message_box,1,wx.EXPAND)
         self.right_box.Add(self.Right_Above_Box,0,wx.EXPAND)
         #右边界面模块结束
 
@@ -107,22 +115,16 @@ class Frame(wx.Frame):
     #
     #
     #
-    # planName = 'testplan'
+
     def on_start(self, event):
         if not self.test_status_check():
             return
         case_list = TestCaseTree.get_tree_select(tree=self.test_case_tree)
-        print case_list
+        device_list = list('abcde')
+        for device in device_list:
+            test_thread = TestExecution(device, case_list, self.message)
+            test_thread.start()
 
-        # Main=MainTest()
-        # serial_number = self.Device_Box.GetItemLabel(self.Device_Box.Selection)
-        # if TREE.getTreeSelect(self.TestCase_TREE) == []:
-        #     print 'Please select some test case'
-        # else:
-        #     self.getPLANwirteJAVA(self.planName)
-        #     Thread_Test = threading.Thread(target=Main.main)
-        #     Thread_Test.start()
-        # self.planName='testplan'
 
     def on_export(self, event):
         test_cases = TestCaseTree.get_tree_select(self.test_case_tree)
@@ -141,7 +143,6 @@ class Frame(wx.Frame):
         else:
             print 'Please select some Test Case'
 
-
     def on_import(self, event):
         dlg = wx.FileDialog(self,
                             message="Select Test Plan",
@@ -154,8 +155,10 @@ class Frame(wx.Frame):
             TestCaseTree.set_tree_select(tree=self.test_case_tree, test_cases=TestCasePlan.read(test_plan=xml_path))
         dlg.Destroy()
 
-
     def test_status_check(self):
         if not TestCaseTree.get_tree_select(self.test_case_tree):
             return False
         return True
+
+    def message(self, msg):
+        self.message_box.AppendText(msg)

@@ -1,53 +1,57 @@
 # -*- encoding:UTF-8 -*-
 from TimeFormat import TimeFormat
 import traceback
-
+from wx import CallAfter
+from GlobalVariable import GlobalVariable
+from os.path import join
+from time import sleep
 
 class Print(object):
-    LogPath = 'C:\\Git\\UiTest\\logs\\UiTest.log'
+    def __init__(self, output, log_name):
+        self.__output = output
+        self.log_path = join(GlobalVariable.log_folder, log_name + '.txt')
 
-    @staticmethod
-    def info(msg):
+    def __print(self, msg):
+        CallAfter(self.__output, msg + '\r\n')
+        sleep(0.05)
+
+
+    def info(self, msg):
         msg = TimeFormat.timestamp() + '  INFO: ' + str(msg)
-        print msg
-        Print.__write(msg)
+        self.__print(msg)
+        self.__write(msg)
 
-    @staticmethod
-    def warm(msg):
+    def warm(self, msg):
         msg = TimeFormat.timestamp() + '  WARM: ' + str(msg)
-        print msg
-        Print.__write(msg)
+        self.__print(msg)
+        self.__write(msg)
 
-    @staticmethod
-    def error(msg):
+    def error(self, msg):
         msg = TimeFormat.timestamp() + ' ERROR: ' + str(msg)
-        print msg
-        Print.__write(msg)
+        self.__print(msg)
+        self.__write(msg)
 
-    @staticmethod
-    def debug(msg):
+    def debug(self, msg):
         msg = TimeFormat.timestamp() + ' DEBUG: ' + str(msg)
-        print msg
-        Print.__write(msg)
+        self.__print(msg)
+        self.__write(msg)
 
-    @staticmethod
-    def result(msg):
+
+    def result(self, msg):
         msg = TimeFormat.timestamp() + '  RSLT: ' + str(msg)
-        print msg
-        Print.__write(msg)
+        self.__print(msg)
+        self.__write(msg)
 
-    @staticmethod
-    def __write(msg):
-        log = open(Print.LogPath, 'a+', 1)
+    def __write(self, msg):
+        log = open(self.log_path, 'a+', 1)
         msg = msg.strip('\r\n')+'\n'
         log.write(msg)
         log.close()
 
-    @staticmethod
-    def traceback():
+    def traceback(self):
         tmp = traceback.format_exc()
         if tmp != 'None\n':
-            Print.debug(tmp.strip('\n'))
+            self.debug(tmp.strip('\n'))
 
 
 
