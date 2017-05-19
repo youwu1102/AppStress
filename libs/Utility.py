@@ -117,6 +117,7 @@ class Utility(object):
     @staticmethod
     def parse_case(case_path):
         doc = parse(case_path)
+        doc.getElementsByTagName('action')
 
 
 

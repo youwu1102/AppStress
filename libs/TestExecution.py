@@ -2,6 +2,7 @@
 __author__ = 'c_youwu'
 import threading
 from PrintInfo import Print
+from Utility import Utility
 
 
 class TestExecution(threading.Thread):
@@ -12,7 +13,6 @@ class TestExecution(threading.Thread):
         self.Print = Print(output, device)
 
     def run(self):
-        while True:
-            for case in self.cases:
-                self.Print.info(self.device + case)
+        for case in self.cases:
+            Utility.parse_case(case_path=case)
 
