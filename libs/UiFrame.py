@@ -5,8 +5,9 @@ sys.setdefaultencoding('utf-8')
 import wx
 import wx.lib.agw.customtreectrl as CT
 from TestCaseTree import TestCaseTree
+from TestCasePlan import TestCasePlan
 from GlobalVariable import GlobalVariable
-
+from TestExecution import TestExecution
 
 
 
@@ -61,19 +62,18 @@ class Frame(wx.Frame):
 #        DEV.getDevicesList()
 #        self.Device_Box = wx.RadioBox(self.panel, -1, "Device", wx.DefaultPosition,wx.DefaultSize,DEV.devices_List, 1, wx.RA_SPECIFY_COLS)#显示设备列表
 #        self.Bind(wx.EVT_RADIOBOX, self.OnChoice, self.Device_Box)
-        global serial_number
 #        serial_number = self.Device_Box.GetItemLabel(self.Device_Box.Selection)
 
-        self.Start_Button = wx.Button(self.panel,-1,'START',size=(-1,40))#开始运行
-        self.Bind(wx.EVT_BUTTON, self.OnStart, self.Start_Button)
-        self.Result_Button = wx.Button(self.panel,-1,'RESULT',size=(-1,40))#打开报告
+        self.start_button = wx.Button(self.panel, -1, 'START', size=(-1,40)) #开始运行
+        self.Bind(wx.EVT_BUTTON, self.on_start, self.start_button)
+        self.Result_Button = wx.Button(self.panel,-1,'RESULT',size=(-1,40)) #打开报告
        # self.Bind(wx.EVT_BUTTON, self.OnResult, self.Result_Button)
         self.Stop_Button = wx.Button(self.panel,-1,'STOP',size=(-1,40))#停止运行
 
         self.Refresh_Button = wx.Button(self.panel,-1,'REFRESH',size=(-1,40))#重新加载页面
       #  self.Bind(wx.EVT_BUTTON, self.OnRefresh, self.Refresh_Button)
 
-        self.Right_Above_Box_HORIZONTAL_1.Add(self.Start_Button,1,wx.EXPAND)
+        self.Right_Above_Box_HORIZONTAL_1.Add(self.start_button,1,wx.EXPAND)
         self.Right_Above_Box_HORIZONTAL_1.Add(self.Stop_Button,1,wx.EXPAND)
         self.Right_Above_Box_HORIZONTAL_2.Add(self.Result_Button,1,wx.EXPAND)
         self.Right_Above_Box_HORIZONTAL_2.Add(self.Refresh_Button,1,wx.EXPAND)
@@ -108,9 +108,12 @@ class Frame(wx.Frame):
     #
     #
     # planName = 'testplan'
-    def OnStart(self,event):
-        TestCaseTree.get_tree_select(tree=self.test_case_tree)
-        # TREE = TestCaseTree()
+    def on_start(self, event):
+        if not self.test_status_check():
+            return
+        case_list = TestCaseTree.get_tree_select(tree=self.test_case_tree)
+        print case_list
+
         # Main=MainTest()
         # serial_number = self.Device_Box.GetItemLabel(self.Device_Box.Selection)
         # if TREE.getTreeSelect(self.TestCase_TREE) == []:
@@ -132,11 +135,8 @@ class Frame(wx.Frame):
                                 )
             if dlg.ShowModal() == wx.ID_OK:
                 xml_path = dlg.GetPaths()[0]
+                TestCasePlan.save(test_cases=TestCaseTree.get_tree_select(self.test_case_tree), save_path=xml_path)
 
-                DOC=PLAN.establishTestPlan(TREE.getTreeSelect(self.TestCase_TREE),TestPlanName=plan_name)
-                file=open(file_name,'w')
-                file.write(DOC.toprettyxml(indent = '',encoding='utf-8'))
-                file.close()
             dlg.Destroy()
         else:
             print 'Please select some Test Case'
@@ -150,30 +150,12 @@ class Frame(wx.Frame):
                             style=wx.OPEN
                             )
         if dlg.ShowModal() == wx.ID_OK:
-            filename=""
-            paths = dlg.GetPaths()
-            for path in paths:
-                filename=filename+path
+            xml_path = dlg.GetPaths()[0]
+            TestCaseTree.set_tree_select(tree=self.test_case_tree, test_cases=TestCasePlan.read(test_plan=xml_path))
         dlg.Destroy()
-        TestCaseTree.set_tree_select(tree=self.test_case_tree, config=filename)
 
-    #
-    #
-    #
-    #
-    # def OnResult(self,event):
-    #     os.system('start %s' % QGP_Path().PATH_RESULTS)
-    #
-    #
-    #
-    # def getPLANwirteJAVA(self,planName):
-    #     TREE = TestCaseTree()
-    #     PLAN = TestCasePlan()
-    #     QGP = QGP_Path()
-    #     WR=writeTestCase()
-    #     DOC = PLAN.establishTestPlan(TREE.getTreeSelect(self.TestCase_TREE))#根据树选择建立以个testplan的XML文档
-    #     XML = open('%s\\%s.xml'% (QGP.PATH_PLANS,'testplan'),'w')#打开一个文档 名字为TESTPLAN
-    #     XML.write(DOC.toprettyxml(indent = '',encoding='utf-8'))#写入DOC
-    #     XML.close()
-    #     testplan=PLAN.readTestPlan(planName)#获取Plan得到的值
-    #     WR.writeToJAVA(testplan)
+
+    def test_status_check(self):
+        if not TestCaseTree.get_tree_select(self.test_case_tree):
+            return False
+        return True

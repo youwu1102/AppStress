@@ -1,33 +1,12 @@
 ﻿#-*- encoding:UTF-8 -*-
 __author__ = 'wuyou'
 import sys
-import os
-import time
-from libs.GlobalVariable import GlobalVariable
 reload(sys)
 sys.setdefaultencoding('utf-8')
-from xml.dom.minidom import Document
-import wx.lib.agw.customtreectrl as CT
-import datetime,wx,threading,commands,subprocess,shutil
-import xml.dom.minidom
+import wx
 from libs.UiFrame import Frame
 
-#
-# #写入默认路径地址
-# class QGP_Path():
-#     def __init__(self):
-#         LOCATION = os.path.abspath(os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), '..'))
-#         self.PATH_TESTCASES = '%s\\repository\\testcases' %LOCATION
-#         self.PATH_JAVA_JAR = 'C:\\QGPAutomationV2.0.0_BASIC\\resource\\UiRobotium'
-#         self.PATH_JAVA_CLASS = os.path.join(self.PATH_JAVA_JAR,'src')
-#         self.PATH_TEMPLATE = os.path.join(self.PATH_JAVA_CLASS,'template','Template.java')
-#         self.NAME_JAVA_JAR = 'wuyou'
-#         self.NUMBER_ANDROID_ID = '10'
-#         self.PATH_LOGS = '%s\\repository\\logs' %LOCATION
-#         self.PATH_RESULTS = '%s\\repository\\results' %LOCATION
-#         self.PATH_DOCS='%s\\docs' %LOCATION
-#         self.PATH_PLANS ='%s\\repository\\plans' %LOCATION
-#         self.PATH_ANT = '%s\\resource\\apache-ant-1.9.4\\bin' %LOCATION
+
 #
 # class RedirectText(object):
 #     def __init__(self,aWxTextCtrl):
@@ -73,135 +52,7 @@ from libs.UiFrame import Frame
 #左侧树构造
 
 
-#
-# class TestCasePlan():
-#     QGP=QGP_Path()
-#     def __init__(self):
-#         pass
-#     def establishTestPlan(self,TestCase,TestPlanName = 'testplan'):
-#         doc = Document()
-#         if TestCase==[]:
-#             print "Please select some Test Case"
-#         else:
-#             PREVIOUS_PACKAGE_NAME=''
-#             PREVIOUS_CLASS_NAME=''
-#             testPlan = doc.createElement('TestPlan')
-#             testPlan.setAttribute('name',TestPlanName)
-#             for x in range(len(TestCase)):
-#                 if TestCase[x][0] != PREVIOUS_PACKAGE_NAME:
-#                     testPackage=doc.createElement('TestPackage')
-#                     testPackage.setAttribute('name',TestCase[x][0])
-#                     PREVIOUS_PACKAGE_NAME=testPackage.getAttribute('name')
-#                     testClass=doc.createElement('TestClass')
-#                     testClass.setAttribute('name',TestCase[x][1])
-#                     PREVIOUS_CLASS_NAME=TestCase[x][1]
-#                     testCase=doc.createElement('TestCase')
-#                     testCase.setAttribute('name',TestCase[x][2])
-#                     testClass.appendChild(testCase)
-#                     testPackage.appendChild(testClass)
-#                     testPlan.appendChild(testPackage)
-#                 else:
-#                     if TestCase[x][1] != PREVIOUS_CLASS_NAME:
-#                         testClass=doc.createElement('TestClass')
-#                         testClass.setAttribute('name',TestCase[x][1])
-#                         PREVIOUS_CLASS_NAME=TestCase[x][1]
-#                         testCase=doc.createElement('TestCase')
-#                         testCase.setAttribute('name',TestCase[x][2])
-#                         testClass.appendChild(testCase)
-#                         testPackage.appendChild(testClass)
-#                     else:
-#                         testCase=doc.createElement('TestCase')
-#                         testCase.setAttribute('name',TestCase[x][2])
-#                         testClass.appendChild(testCase)
-#             doc.appendChild(testPlan)
-#             # f = open('%s\\%s.xml'% (QGP.PATH_PLANS,TestPlanName),'w')
-#             # f.write(doc.toprettyxml(indent = '',encoding='utf-8'))
-#             # f.close()
-#             return doc
-#
-#     def readTestPlan(self,TestPlanName = 'testplan'):
-#         testPlanList=[]
-#         QGP=QGP_Path()
-#         dom = xml.dom.minidom.parse('%s\\%s.xml'% (QGP.PATH_PLANS,TestPlanName))
-#         root = dom.documentElement
-#         TestPackageList = root.getElementsByTagName('TestPackage')
-#         for x in range(len(TestPackageList)):
-#             TestPackage=TestPackageList[x]
-#             TestClassList=TestPackage.getElementsByTagName('TestClass')
-#             for y in range(len(TestClassList)):
-#                 TestClass=TestClassList[y]
-#                 TestCaseList = TestClass.getElementsByTagName('TestCase')
-#                 for z in range(len(TestCaseList)):
-#                     TestCase=TestCaseList[z]
-#                     PATH =  '%s\\%s\\%s\\%s' %(QGP.PATH_TESTCASES,TestPackage.getAttribute('name'),TestClass.getAttribute('name'),TestCase.getAttribute('name'))
-#                     testPlanList.append(PATH)
-#         return testPlanList
-# class writeTestCase:
-#     def __init__(self):
-#         pass
-#     def writeToJAVA(self,TestCaseList):
-#         QGP=QGP_Path()
-#         PATH=QGP_Path().PATH_TESTCASES
-#         PATH_JAVA_CLASS=QGP_Path().PATH_JAVA_CLASS
-#         files_Package = os.listdir(PATH)
-#         for testPackage in files_Package:
-#             if os.path.isdir(os.path.join(PATH, testPackage)):
-#                 #print testPackage
-#                 if testPackage not in os.listdir(PATH_JAVA_CLASS):
-#                     os.mkdir('%s\\%s' %(PATH_JAVA_CLASS,testPackage))
-#                 files_Class= os.listdir(os.path.join(PATH, testPackage))
-#                 for testClass in files_Class:
-#                     if os.path.isdir(os.path.join(PATH, testPackage,testClass)):
-#                         TestClass=open('%s\\%s\\%s.java'%(PATH_JAVA_CLASS,testPackage,testClass.replace('-','')),'w')
-#                         Template=open(QGP_Path().PATH_TEMPLATE,'r')
-#                         for line in Template:
-#                             if 'package Template;' in line:
-#                                 TestClass.writelines('package %s;\r\n' %testPackage)
-#                             elif 'public class Template extends UiAutomatorTestCase' in line:
-#                                 TestClass.writelines('public class %s extends UiAutomatorTestCase\r\n' %testClass.replace('-',''))
-#                             elif ('//start' in line):
-#                                 for files_Case in TestCaseList:
-#                                     a=files_Case[len(QGP_Path().PATH_TESTCASES)+1:].split('\\')
-#                                     if a[0]==testPackage and a[1]==testClass:
-#                                         Case=open(files_Case,'r')
-#                                         TestClass.writelines('    public void test%s() throws UiObjectNotFoundException\r' % a[2][:-4].replace('-',''))
-#                                         TestClass.writelines('    {\r')
-#                                         for l in Case:
-#                                             TestClass.writelines('       '+l.strip('	').strip('﻿'))
-#                                         TestClass.writelines('    }\r')
-#                                         TestClass.writelines('\r\n')
-#                                         Case.close
-#
-#                             else:
-#                                 TestClass.writelines(line)
-#                         Template.close()
-#                         TestClass.close()
-#
-#
-# #先把所有的初始文件写成模板
-#     def writeDefault(self):
-#         PATH=QGP_Path().PATH_TESTCASES
-#         PATH_JAVA_CLASS=QGP_Path().PATH_JAVA_CLASS
-#         files_Package = os.listdir(PATH)
-#         for testPackage in files_Package:
-#             if os.path.isdir(os.path.join(PATH, testPackage)):
-#                 #print testPackage
-#                 if testPackage not in os.listdir(PATH_JAVA_CLASS):
-#                     os.mkdir('%s\\%s' %(PATH_JAVA_CLASS,testPackage))
-#                 files_Class= os.listdir(os.path.join(PATH, testPackage))
-#                 for testClass in files_Class:
-#                     if os.path.isdir(os.path.join(PATH, testPackage,testClass)):
-#                         TestClass=open('%s\\%s\\%s.java'%(PATH_JAVA_CLASS,testPackage,testClass.replace('-','')),'w')
-#                         Template=open(QGP_Path().PATH_TEMPLATE,'r')
-#                         for line in Template:
-#                             if 'package Template;' in line:
-#                                 TestClass.writelines('package %s;\r\n' %testPackage)
-#                             elif 'public class Template extends UiAutomatorTestCase' in line:
-#                                 TestClass.writelines('public class %s extends UiAutomatorTestCase\r\n' %testClass.replace('-',''))
-#                             else:
-#                                 TestClass.writelines(line)
-#                         Template.close()
-#                         TestClass.close()
+
 # class MainTest():
 #     def buildJAR(self):
 #         self.buildPass=False
