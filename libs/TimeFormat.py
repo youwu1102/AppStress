@@ -17,6 +17,9 @@ class TimeFormat(object):
     def timestamp():
         return time.strftime(TimeFormat.__FORMAT, time.localtime(time.time()))
 
+    @staticmethod
+    def time():
+        return time.time()
 if __name__ == '__main__':
     TimeFormat.set_time_format('%m-%d =%H:%M:%S')
     for x in range(10):

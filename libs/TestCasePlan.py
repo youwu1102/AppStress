@@ -11,7 +11,7 @@ class TestCasePlan(object):
             case.setAttribute('path', test_case)
             root.appendChild(case)
         doc.appendChild(root)
-        xml=open(save_path, 'w')
+        xml = open(save_path, 'w')
         xml.write(doc.toprettyxml(indent='', encoding='utf-8'))
         xml.close()
 

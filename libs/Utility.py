@@ -2,10 +2,14 @@
 __author__ = 'c_youwu'
 from PrintInfo import Print
 from GlobalVariable import GlobalVariable
-import os
+from os.path import join, exists
+from os import popen, makedirs
 import re
 from time import sleep
-from xml.dom.minidom import parse
+from TestCase import TestCase
+from TestCaseTree import TestCaseTree
+from TimeFormat import TimeFormat
+
 
 class Utility(object):
 
@@ -25,7 +29,7 @@ class Utility(object):
         即可以理解为 希望结果中不出现Python字样
         """
         Print.info('I run the command: %s' % cmd)
-        actual_result = os.popen(cmd).read().strip('\r\n')
+        actual_result = popen(cmd).read().strip('\r\n')
         if need_output and not except_result:
             Print.info('I get the command output: %s' % actual_result)
             return actual_result
@@ -49,7 +53,7 @@ class Utility(object):
         """
         cmd = '%s shell \"%s\"' % (GlobalVariable.adb_exe, cmd)
         Print.info('I run the command: %s' % cmd)
-        actual_result = os.popen(cmd).read().strip('\r\n')
+        actual_result = popen(cmd).read().strip('\r\n')
         if need_output and not except_result:
             Print.info('I get the command output: %s' % actual_result)
             return actual_result
@@ -115,9 +119,28 @@ class Utility(object):
         sleep(1)
 
     @staticmethod
-    def parse_case(case_path):
-        doc = parse(case_path)
-        doc.getElementsByTagName('action')
+    def test_case_parse(case_path):
+        return TestCase.parse(case_path=case_path)
+
+    @staticmethod
+    def test_status_check(tree):
+        if not TestCaseTree.get_tree_select(tree):
+            return False
+        return True
+
+    @staticmethod
+    def test_initialization():
+        Utility.__set_log_path()
 
 
+    @staticmethod
+    def __set_log_path():
+        GlobalVariable.test_start_time = TimeFormat.time()
+        GlobalVariable.test_log_path = join(GlobalVariable.log_folder, TimeFormat.timestamp())  # 如果是PC的话保存在当前目录的下LOG文件夹然后加上当前的时间戳
+        makedirs(GlobalVariable.test_log_path)  # 在PC上创建LOG文件夹
 
+    @staticmethod
+    def create_folder(folder_path):
+        if not exists(folder_path):
+            makedirs(folder_path)
+        return folder_path

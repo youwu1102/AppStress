@@ -9,7 +9,7 @@ from time import sleep
 class Print(object):
     def __init__(self, output, log_name):
         self.__output = output
-        self.log_path = join(GlobalVariable.log_folder, log_name + '.txt')
+        self.log_path = join(GlobalVariable.test_log_path, log_name + '.txt')
 
     def __print(self, msg):
         CallAfter(self.__output, msg + '\r\n')

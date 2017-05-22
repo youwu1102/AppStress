@@ -8,7 +8,7 @@ from TestCaseTree import TestCaseTree
 from TestCasePlan import TestCasePlan
 from GlobalVariable import GlobalVariable
 from TestExecution import TestExecution
-
+from Utility import Utility
 
 class RedirectText(object):
     def __init__(self, wx_text_ctrl):
@@ -113,12 +113,14 @@ class Frame(wx.Frame):
     #
 
     def on_start(self, event):
-        if not self.test_status_check():
+        if not Utility.test_status_check(self.test_case_tree):
             return
+        Utility.test_initialization()
         case_list = TestCaseTree.get_tree_select(tree=self.test_case_tree)
-        device_list = list('abcde')
+        device_list = ['ce58ac0d']
         for device in device_list:
             test_thread = TestExecution(device, case_list, self.message)
+            test_thread.setDaemon(True)
             test_thread.start()
 
 
@@ -151,10 +153,8 @@ class Frame(wx.Frame):
             TestCaseTree.set_tree_select(tree=self.test_case_tree, test_cases=TestCasePlan.read(test_plan=xml_path))
         dlg.Destroy()
 
-    def test_status_check(self):
-        if not TestCaseTree.get_tree_select(self.test_case_tree):
-            return False
-        return True
+
+
 
     def message(self, msg):
         self.message_box.AppendText(msg)
