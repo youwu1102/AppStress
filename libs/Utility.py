@@ -6,7 +6,7 @@ from os.path import join, exists
 from os import popen, makedirs
 import re
 from time import sleep
-from TestCase import TestCase
+from Case import Case
 from TestCaseTree import TestCaseTree
 from TimeFormat import TimeFormat
 
@@ -120,7 +120,7 @@ class Utility(object):
 
     @staticmethod
     def test_case_parse(case_path):
-        return TestCase.parse(case_path=case_path)
+        return Case.parse(case_path=case_path)
 
     @staticmethod
     def test_status_check(tree):
