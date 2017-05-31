@@ -5,8 +5,10 @@ from PrintInfo import Print
 from Utility import Utility
 from os.path import join
 from GlobalVariable import GlobalVariable
-from UiAutomator import UiAutomator
+from UiAutomator import UiAutomator, TemporaryVariable
 from time import sleep
+from Logic import Logic
+
 
 
 class TestExecution(threading.Thread):
@@ -14,14 +16,12 @@ class TestExecution(threading.Thread):
         threading.Thread.__init__(self)
         self.serial = serial
         self.cases = cases
-        #self.Print = Print(output, serial)
+        self.Print = Print(output, serial)
         self.device = UiAutomator(serial)
-        #self.Print.info('UiAutomator')
-
-
+        self.Print.info('UiAutomator')
+        self.tv = TemporaryVariable()
 
     def run(self):
-        print 's'
         self.__test_init()
         self.__test_exec()
         self.__test_end()
@@ -38,7 +38,6 @@ class TestExecution(threading.Thread):
 
     def __test_exec(self):
         if GlobalVariable.test_policy == 'random':
-            print 's'
             self.__random_test()
         elif GlobalVariable.test_policy == 'sequence':
             self.__sequence_test()
@@ -50,7 +49,7 @@ class TestExecution(threading.Thread):
     def __random_test(self):
         from random import choice
         from time import time
-        while time() > self.destiny_time:
+        while time() < self.destiny_time:
             self.__test_unit(choice(self.cases))
             sleep(3)
 
@@ -58,39 +57,10 @@ class TestExecution(threading.Thread):
         pass
 
     def __test_unit(self, case):
+        self.tv = TemporaryVariable()
         steps = Utility.test_case_parse(case_path=case)
-        print steps
         for step in steps:
-
-            self.switch_step(step=step)
-
-    def switch_step(self, step):
-        step_name, step_value = step.tag, step.attrib
-        if step_name == "if":
-            pass
-        elif step_name == "while":
-            pass
-        elif step_name == "loop":
-
-            if step_value.get('child'):
-                for
-
-        elif step_name == "assign":
-            pass
-        elif step_name == "action":
-            UiAutomator.do_action(step_value)
-
-    def __loop(self):
-        pass
-
-    def __while(self):
-        pass
-
-    def __assign(self):
-        pass
-
-    def __if(self):
-        pass
+            self.Print.debug(self.switch_step(step=step))
 
 if __name__ == '__main__':
     te = TestExecution('ce58ac0d', ['C:\\Users\\c_youwu\\Documents\\GitHub\\AppStress\\repository\\cases\\L\\d.xml'], None)

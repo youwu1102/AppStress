@@ -153,8 +153,5 @@ class Frame(wx.Frame):
             TestCaseTree.set_tree_select(tree=self.test_case_tree, test_cases=TestCasePlan.read(test_plan=xml_path))
         dlg.Destroy()
 
-
-
-
     def message(self, msg):
         self.message_box.AppendText(msg)

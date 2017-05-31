@@ -144,3 +144,23 @@ class Utility(object):
         if not exists(folder_path):
             makedirs(folder_path)
         return folder_path
+
+
+    @staticmethod
+    def convert_expression(left, expression, right):
+        if expression == "<":
+            return left < right
+        elif expression == "<=":
+            return left <= right
+        elif expression == ">":
+            return left > right
+        elif expression == ">=":
+            return left >= right
+        elif expression == "==":
+            return left == right
+        elif expression == "in":
+            return left in right
+        elif expression == "!=":
+            return left != right
+        else:
+            print expression

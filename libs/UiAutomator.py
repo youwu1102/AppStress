@@ -29,6 +29,8 @@ class UiAutomator(object):
             return self.__wakeup()
         elif action_name == 'sleep':
             return self.__sleep()
+        elif action_name == 'objectinfo':
+            return self.__get_object_info(**kwargs)
 
     def __get_selector(self, **kwargs):
         tmp = dict()
@@ -61,6 +63,13 @@ class UiAutomator(object):
         selector = self.__get_selector(**kwargs)
         text_input = kwargs.get('input')
         return self.device(**selector).set_text(text=text_input)
+
+    def __get_object_info(self, **kwargs):
+        selector = self.__get_selector(**kwargs)
+        key = kwargs.get('key')
+        if key:
+            return self.device(**selector).info.get(key)
+        return self.device(**selector).info
 
     def __wait(self, **kwargs):
         try:
@@ -104,7 +113,8 @@ class UiAutomator(object):
     #     except Exception:
     #         return self.get_current_package_name()
     #
-
+    def get_device_info(self):
+        return self.device.info
 
 class TemporaryVariable (object):
     def __init__(self):
