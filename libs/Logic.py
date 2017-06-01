@@ -1,5 +1,5 @@
 __author__ = 'c_youwu'
-from Utility import Utility
+from Case import Case
 
 class Logic(object):
     def __init__(self, device, Print):
@@ -62,9 +62,81 @@ class Logic(object):
             for child in children:
                 self.switch_step(child)
 
+
+
+    @staticmethod
+    def convert_expression(left, expression, right):
+        if expression == "<":
+            return left < right
+        elif expression == "<=":
+            return left <= right
+        elif expression == ">":
+            return left > right
+        elif expression == ">=":
+            return left >= right
+        elif expression == "==":
+            return left == right
+        elif expression == "in":
+            return left in right
+        elif expression == "!=":
+            return left != right
+        else:
+            print expression
+
+
+class CheckModule(object):
+    def __init__(self, _print, cases):
+        self._print = _print
+        self.cases = cases
+        self.__status = True
+
+    def get_status(self):
+        return self.__status
+
+    def run(self):
+        for case in self.cases:
+            steps = Case.parse(case_path=case)
+            for step in steps:
+                self.switch_step(step)
+
+
+    def switch_step(self, step):
+        step_name, step_value = step.tag, step.attrib
+        if step_name == "if":
+            self.__if(step_value)
+        elif step_name == "while":
+            pass
+        elif step_name == "loop":
+            self.__loop(step_value)
+        elif step_name == "assign":
+            self.__assign(step_value)
+        elif step_name == "action":
+            pass
+
+    def __assign(self, step_value):
+        children = self.__check_attrib(step_value, '533ab525a8760351')
+        assignment = children[0]
+        if assignment.tag != 'action':
+            self._print("Error assignment statement")
+            self.__status = False
+
+    def __if(self, step_value):
+        children = self.__check_attrib(step_value, '533ab525a8760351')
+        expression = self.__check_attrib(step_value, 'expression')
+        value = self.__check_attrib(step_value, 'value')
+        variable = self.__check_attrib(step_value, 'variable')
+        for child in children:
+            self.switch_step(child)
+
+    def __loop(self, step_value):
+        children = self.__check_attrib(step_value, '533ab525a8760351')
+        time = self.__check_attrib(step_value, 'time')
+        for child in children:
+            self.switch_step(child)
+
     def __check_attrib(self, node, attrib_name):
         if attrib_name not in node.keys():
-            self.Print.error("Can not find \"%s\" in %s" % (attrib_name, str(node)))
+            self._print("Can not find \"%s\" in %s" % (attrib_name, str(node)))
+            self.__status = False
             return False
         return node.get(attrib_name)
-
