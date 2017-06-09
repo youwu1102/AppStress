@@ -58,14 +58,12 @@ class Logic(object):
         variable = self.__check_attrib(step_value, 'variable')
         if expression is False or value is False or variable is False:
             return
-        if Utility.convert_expression(self.tv.__getattribute__(variable), expression, value):
+        if Logic.__convert_expression(self.tv.__getattribute__(variable), expression, value):
             for child in children:
                 self.switch_step(child)
 
-
-
     @staticmethod
-    def convert_expression(left, expression, right):
+    def __convert_expression(left, expression, right):
         if expression == "<":
             return left < right
         elif expression == "<=":
@@ -95,6 +93,7 @@ class CheckModule(object):
 
     def run(self):
         for case in self.cases:
+            self._print('Processing: ' + case)
             steps = Case.parse(case_path=case)
             for step in steps:
                 self.switch_step(step)
@@ -114,6 +113,7 @@ class CheckModule(object):
             pass
 
     def __assign(self, step_value):
+        self.__step_msg('assign')
         children = self.__check_attrib(step_value, '533ab525a8760351')
         assignment = children[0]
         if assignment.tag != 'action':
@@ -121,6 +121,7 @@ class CheckModule(object):
             self.__status = False
 
     def __if(self, step_value):
+        self.__step_msg('if')
         children = self.__check_attrib(step_value, '533ab525a8760351')
         expression = self.__check_attrib(step_value, 'expression')
         value = self.__check_attrib(step_value, 'value')
@@ -129,6 +130,7 @@ class CheckModule(object):
             self.switch_step(child)
 
     def __loop(self, step_value):
+        self.__step_msg('loop')
         children = self.__check_attrib(step_value, '533ab525a8760351')
         time = self.__check_attrib(step_value, 'time')
         for child in children:
@@ -136,7 +138,10 @@ class CheckModule(object):
 
     def __check_attrib(self, node, attrib_name):
         if attrib_name not in node.keys():
-            self._print("Can not find \"%s\" in %s" % (attrib_name, str(node)))
+            self._print("--can not found key: %s" % attrib_name)
             self.__status = False
             return False
         return node.get(attrib_name)
+
+    def __step_msg(self, step_name):
+        self._print('-Step:%s' % step_name)
