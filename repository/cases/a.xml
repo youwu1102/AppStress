@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <case>
     <loop time="10">
+        <assign variable="a">
+            <action name="sleep"/>
+        </assign>
         <assign variable="b">
             <action name="WakeUp"/>
         </assign>
-        <if variable="b" except="true">
-            <action name="WakeUp"/>
-        </if>
         <action name="Press" key="home"/>
         <action name="Click" text="Email"/>
         <action name="Edit" id="com.android.email:id/account_email" input="I am shuai"/>
@@ -25,9 +25,5 @@
     <assign variable="b">
         <action name="WakeUp"/>
     </assign>
-    <if name="if" except="bbb">
-        <action name="WakeUp"/>
-    </if>
-    <while variable="b" except="true">
-    </while>
+
 </case>

@@ -1,10 +1,14 @@
 __author__ = 'c_youwu'
 from Case import Case
 
-class Logic(object):
+class ExecutionModule(object):
     def __init__(self, device, Print):
         self.device = device
         self.Print = Print
+        self.tv = TemporaryVariable()
+
+    def reset_variable(self):
+        self.tv = TemporaryVariable()
 
     def switch_step(self, step):
         step_name, step_value = step.tag, step.attrib
@@ -12,8 +16,6 @@ class Logic(object):
         self.Print.debug(step_value)
         if step_name == "if":
             self.__if(step_value)
-        elif step_name == "while":
-            pass
         elif step_name == "loop":
             self.__loop(step_value)
         elif step_name == "assign":
@@ -28,7 +30,6 @@ class Logic(object):
         except ValueError:
             time = 1
         if not children:
-            self.Print.error("Loop body is empty")
             return
         for i in xrange(time):
             for child in children:
@@ -39,26 +40,17 @@ class Logic(object):
 
     def __assign(self, step_value):
         children = step_value.get('533ab525a8760351')
-        if not children:
-            self.Print.error("The assignment statement cannot be found")
-            return
         assignment = children[0]
-        if assignment.tag != 'action':
-            self.Print.error("Error assignment statement")
-            return
         self.tv.__setattr__(step_value.get('variable'), self.device.do_action(**assignment.attrib))
 
     def __if(self, step_value):
-        print step_value
-        children = step_value.get('533ab525a8760351')
+        children = self.__get_attrib(step_value, '533ab525a8760351')
         if not children:
             return
-        expression = self.__check_attrib(step_value, 'expression')
-        value = self.__check_attrib(step_value, 'value')
-        variable = self.__check_attrib(step_value, 'variable')
-        if expression is False or value is False or variable is False:
-            return
-        if Logic.__convert_expression(self.tv.__getattribute__(variable), expression, value):
+        expression = self.__get_attrib(step_value, 'expression')
+        value = self.__get_attrib(step_value, 'value')
+        variable = self.__get_attrib(step_value, 'variable')
+        if ExecutionModule.__convert_expression(self.tv.__getattribute__(variable), expression, value):
             for child in children:
                 self.switch_step(child)
 
@@ -81,6 +73,8 @@ class Logic(object):
         else:
             print expression
 
+    def __get_attrib(self, node, attrib_name):
+        return node.get(attrib_name)
 
 class CheckModule(object):
     def __init__(self, _print, cases):
@@ -98,13 +92,10 @@ class CheckModule(object):
             for step in steps:
                 self.switch_step(step)
 
-
     def switch_step(self, step):
         step_name, step_value = step.tag, step.attrib
         if step_name == "if":
             self.__if(step_value)
-        elif step_name == "while":
-            pass
         elif step_name == "loop":
             self.__loop(step_value)
         elif step_name == "assign":
@@ -138,10 +129,16 @@ class CheckModule(object):
 
     def __check_attrib(self, node, attrib_name):
         if attrib_name not in node.keys():
-            self._print("--can not found key: %s" % attrib_name)
+            if attrib_name == '533ab525a8760351':
+                self._print("--can not found child")
+            self._print("--can not found except attribute: \"%s\"" % attrib_name)
             self.__status = False
             return False
         return node.get(attrib_name)
 
     def __step_msg(self, step_name):
         self._print('-Step:%s' % step_name)
+
+class TemporaryVariable (object):
+    def __init__(self):
+        pass

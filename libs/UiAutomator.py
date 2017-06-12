@@ -116,7 +116,4 @@ class UiAutomator(object):
     def get_device_info(self):
         return self.device.info
 
-class TemporaryVariable (object):
-    def __init__(self):
-        pass
 

@@ -117,7 +117,7 @@ class Frame(wx.Frame):
             return
         Utility.test_initialization()
         case_list = TestCaseTree.get_tree_select(tree=self.test_case_tree)
-        device_list = ['ce58ac0d']
+        device_list = ['b1f6c850']
         for device in device_list:
             test_thread = TestExecution(device, case_list, self.message)
             test_thread.setDaemon(True)
