@@ -14,7 +14,10 @@ class TestCaseTree(object):
                 TestCaseTree.append_test_case(tree=tree, parent=child, case_path=join(case_path, case))
             else:
                 if case.endswith('.xml'):
-                    tree.AppendItem(parent, case, 1)
+                    if case in ['TestInitialization.xml']:
+                        tree.AppendItem(parent, case, 0)
+                    else:
+                        tree.AppendItem(parent, case, 1)
 
     @staticmethod
     def get_tree_select(tree):

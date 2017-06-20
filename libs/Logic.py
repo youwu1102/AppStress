@@ -12,8 +12,8 @@ class ExecutionModule(object):
 
     def switch_step(self, step):
         step_name, step_value = step.tag, step.attrib
-        self.Print.debug(step_name)
-        self.Print.debug(step_value)
+        #self.Print.debug(step_name)
+        #self.Print.debug(step_value)
         if step_name == "if":
             self.__if(step_value)
         elif step_name == "loop":
@@ -41,7 +41,10 @@ class ExecutionModule(object):
     def __assign(self, step_value):
         children = step_value.get('533ab525a8760351')
         assignment = children[0]
-        self.tv.__setattr__(step_value.get('variable'), self.device.do_action(**assignment.attrib))
+        variable = step_value.get('variable')
+        value = self.device.do_action(**assignment.attrib)
+        self.Print.debug('assign>> \"%s = %s\"' % (variable, value))
+        self.tv.__setattr__(variable, value)
 
     def __if(self, step_value):
         children = self.__get_attrib(step_value, '533ab525a8760351')
@@ -50,6 +53,7 @@ class ExecutionModule(object):
         expression = self.__get_attrib(step_value, 'expression')
         value = self.__get_attrib(step_value, 'value')
         variable = self.__get_attrib(step_value, 'variable')
+        self.Print.debug('if>> \"%s %s %s\"' % (self.tv.__getattribute__(variable), expression, value))
         if ExecutionModule.__convert_expression(self.tv.__getattribute__(variable), expression, value):
             for child in children:
                 self.switch_step(child)

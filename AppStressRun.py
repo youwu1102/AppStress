@@ -4,7 +4,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 import wx
-from libs.UiFrame import Frame
+from libs.UiFrame import UiFrame
 
 
 #
@@ -395,7 +395,7 @@ from libs.UiFrame import Frame
 
 if __name__ == "__main__":
     app = wx.App()
-    f = Frame()
+    f = UiFrame()
     f.Show()
     app.MainLoop()
 

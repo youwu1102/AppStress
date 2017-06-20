@@ -17,7 +17,7 @@ class RedirectText(object):
     def write(self, string):
         wx.CallAfter(self.out.WriteText, string)
 
-class Frame(wx.Frame):
+class UiFrame(wx.Frame):
     def __init__(self):
         wx.Frame.__init__(self, None, -1, title="China App Stress", size=(1000, 600))
         self.Center()
@@ -25,7 +25,7 @@ class Frame(wx.Frame):
         self.main_box = wx.BoxSizer( wx.HORIZONTAL)#整个界面，水平布局
         self.left_box = wx.BoxSizer( wx.VERTICAL)#左边界面，主要放置 Tree和PLAN的导入导出
         self.right_box = wx.BoxSizer( wx.VERTICAL)#右边界面，主要放置 文本输出和基本按键
-
+        self.thread_list =list()
         #左边界面模块开始
         #---------树模块开始
         self.test_case_tree = CT.CustomTreeCtrl(self.panel, agwStyle=wx.TR_DEFAULT_STYLE | CT.TR_AUTO_CHECK_PARENT | CT.TR_AUTO_CHECK_CHILD)
@@ -72,13 +72,14 @@ class Frame(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.on_start, self.start_button)
         self.Result_Button = wx.Button(self.panel,-1,'RESULT',size=(-1,40)) #打开报告
        # self.Bind(wx.EVT_BUTTON, self.OnResult, self.Result_Button)
-        self.Stop_Button = wx.Button(self.panel,-1,'STOP',size=(-1,40))#停止运行
-
+        self.stop_button = wx.Button(self.panel,-1,'STOP',size=(-1,40))#停止运行
+        self.Bind(wx.EVT_BUTTON, self.on_stop, self.stop_button)
         self.Refresh_Button = wx.Button(self.panel,-1,'REFRESH',size=(-1,40))#重新加载页面
       #  self.Bind(wx.EVT_BUTTON, self.OnRefresh, self.Refresh_Button)
 
-        self.Right_Above_Box_HORIZONTAL_1.Add(self.start_button,1,wx.EXPAND)
-        self.Right_Above_Box_HORIZONTAL_1.Add(self.Stop_Button,1,wx.EXPAND)
+        self.Right_Above_Box_HORIZONTAL_1.Add(self.start_button, 1, wx.EXPAND)
+        self.Right_Above_Box_HORIZONTAL_1.Add(self.stop_button, 1, wx.EXPAND)
+
         self.Right_Above_Box_HORIZONTAL_2.Add(self.Result_Button,1,wx.EXPAND)
         self.Right_Above_Box_HORIZONTAL_2.Add(self.Refresh_Button,1,wx.EXPAND)
         self.Right_Above_Box_VERTICAL.Add(self.Right_Above_Box_HORIZONTAL_1,1,wx.EXPAND)
@@ -117,11 +118,21 @@ class Frame(wx.Frame):
             return
         Utility.test_initialization()
         case_list = TestCaseTree.get_tree_select(tree=self.test_case_tree)
-        device_list = ['b1f6c850']
+        device_list = ['']
         for device in device_list:
             test_thread = TestExecution(device, case_list, self.message)
             test_thread.setDaemon(True)
             test_thread.start()
+
+            self.thread_list.append(test_thread)
+
+    def on_stop(self, event):
+        for thread in self.thread_list:
+            if thread.isAlive():
+                print 'True'
+                thread.stop()
+
+
 
 
     def on_export(self, event):

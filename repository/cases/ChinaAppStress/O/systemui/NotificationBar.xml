@@ -1,33 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <case>
-    <loop time="10">
-        <assign variable="b">
-            <action name="WakeUp"/>
-        </assign>
-        <if variable="b" except="true">
-            <action name="WakeUp"/>
-        </if>
-        <action name="Press" key="home"/>
-        <action name="Click" text="Email"/>
-        <action name="Edit" id="com.android.email:id/account_email" input="I am shuai"/>
-        <action name="Wait" time="3000" />
-        <action name="Press" key="home"/>
-        <action name="Click" text="Email"/>
-        <action name="Edit" id="com.android.email:id/account_email" input="I am shuai"/>
-        <action name="Wait" time="3000" />
-        <action name="Press" key="home"/>
-        <action name="Click" text="Email"/>
-        <action name="Edit" id="com.android.email:id/account_email"/>
-        <action name="Sleep"/>
-        <action name="Wait" time="3000" />
-        <action name="WakeUp"/>
-    </loop>
-    <assign variable="b">
-        <action name="WakeUp"/>
-    </assign>
-    <if name="if" except="bbb">
-        <action name="WakeUp"/>
-    </if>
-    <while variable="b" except="true">
-    </while>
+    <!--<action name="open" key="notification"/>-->
+    <action name="open" key="quick_settings"/>
+    <action name="random_click" id="com.android.systemui:id/tile_label"/>
 </case>
+

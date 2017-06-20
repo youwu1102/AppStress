@@ -2,6 +2,7 @@
 from uiautomator import Device
 from uiautomator import JsonRPCError
 from time import sleep
+from random import randint
 
 # http://xiaocong.github.io/slides/android-uiautomator-and-python/#/first-usage
 class UiAutomator(object):
@@ -21,6 +22,8 @@ class UiAutomator(object):
             return self.__press(**kwargs)
         elif action_name == 'click':
             return self.__click(**kwargs)
+        elif action_name == 'random_click':
+            return self.__random_click(**kwargs)
         elif action_name == 'edit':
             return self.__edit(**kwargs)
         elif action_name == 'wait':
@@ -31,6 +34,12 @@ class UiAutomator(object):
             return self.__sleep()
         elif action_name == 'objectinfo':
             return self.__get_object_info(**kwargs)
+        elif action_name == 'orientation':
+            return self.__orientation(**kwargs)
+        elif action_name == 'get_current_package_name':
+            return self.__get_current_package_name()
+        elif action_name == 'open':
+            return self.__open(**kwargs)
 
     def __get_selector(self, **kwargs):
         tmp = dict()
@@ -47,6 +56,17 @@ class UiAutomator(object):
         except JsonRPCError:
             return False
 
+    def __random_click(self, **kwargs):
+        selector = self.__get_selector(**kwargs)
+        count = self.device(**selector).count
+        if count <= 0:
+            return False
+        selector['instance'] = randint(0, count-1)
+        self.device(**selector).click()
+
+
+
+
     def __press(self, **kwargs):
         key = kwargs.get('key')
         if key in ["home", "back", "left", "right", "up", "down", "center", "menu", "search", "enter",
@@ -58,6 +78,29 @@ class UiAutomator(object):
                 return self.device.press(key_code)
             except ValueError:
                 return False
+
+    def __open(self,**kwargs):
+        key = kwargs.get('key')
+        if key in ["notification", "quick_settings"]:
+            return self.device.open.__getattr__(key)()
+        return False
+
+    def __orientation(self, **kwargs):
+        # left/l:       rotation=90 , displayRotation=1
+        # right/r:      rotation=270, displayRotation=3
+        # natural/n:    rotation=0  , displayRotation=0
+        # upsidedown/u: rotation=180, displayRotation=2
+        value = kwargs.get('value')
+        if value in ['l', 'r', 'n', 'u', 'left', 'right', 'natural', 'upsidedown']:
+            self.device.orientation = value
+            return True
+        return False
+
+    def __freeze_rotation(self, **kwargs):
+        value = kwargs.get('value', 'true')
+        if value in ['False', 'false', 'f']:
+            return self.device.freeze_rotation(freeze=False)
+        return self.device.freeze_rotation(True)
 
     def __edit(self, **kwargs):
         selector = self.__get_selector(**kwargs)
@@ -85,6 +128,7 @@ class UiAutomator(object):
     def __sleep(self):
         return self.device.sleep()
 
+
     # def info(self):
     #     return self.device.info
     #
@@ -107,13 +151,11 @@ class UiAutomator(object):
     # def scroll(self, **kwargs):
     #     return self.device(**kwargs).scroll(steps=steps)
     #
-    # def get_current_package_name(self):
-    #     try:
-    #         return self.device.info.get('currentPackageName')
-    #     except Exception:
-    #         return self.get_current_package_name()
-    #
+    def __get_current_package_name(self):
+        return self.device.info.get('currentPackageName')
+
     def get_device_info(self):
         return self.device.info
+
 
 
