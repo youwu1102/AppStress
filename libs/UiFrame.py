@@ -114,8 +114,8 @@ class UiFrame(wx.Frame):
     #
 
     def on_start(self, event):
-        if not Utility.test_status_check(self.test_case_tree):
-            return
+        # if not Utility.test_status_check(self.test_case_tree):
+        #     return
         Utility.test_initialization()
         case_list = TestCaseTree.get_tree_select(tree=self.test_case_tree)
         device_list = ['']

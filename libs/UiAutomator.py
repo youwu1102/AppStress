@@ -1,6 +1,6 @@
 # -*- encoding:UTF-8 -*-
 from uiautomator import Device
-from uiautomator import JsonRPCError
+
 from time import sleep
 from random import randint
 
@@ -40,6 +40,10 @@ class UiAutomator(object):
             return self.__get_current_package_name()
         elif action_name == 'open':
             return self.__open(**kwargs)
+        elif action_name == 'exists':
+            return self.__exists(**kwargs)
+        elif action_name == 'return_to':
+            return self.__return_to(**kwargs)
 
     def __get_selector(self, **kwargs):
         tmp = dict()
@@ -51,10 +55,11 @@ class UiAutomator(object):
 
     def __click(self, **kwargs):
         selector = self.__get_selector(**kwargs)
-        try:
-            return self.device(**selector).click()
-        except JsonRPCError:
-            return False
+        return self.device(**selector).click()
+
+    def __exists(self, **kwargs):
+        selector = self.__get_selector(**kwargs)
+        return self.device(**selector).exists
 
     def __random_click(self, **kwargs):
         selector = self.__get_selector(**kwargs)
@@ -157,5 +162,10 @@ class UiAutomator(object):
     def get_device_info(self):
         return self.device.info
 
-
+    def __return_to(self, **kwargs):
+        selector = self.__get_selector(**kwargs)
+        for x in range(10):
+            if self.device(**selector).exists:
+                break
+            self.device.press.back()
 

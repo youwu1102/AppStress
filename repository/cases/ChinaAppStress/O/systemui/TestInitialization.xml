@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <case>
-    <action name="orientation" value="n"/>
-    <assign variable="package_name">
-        <action name="get_current_package_name"/>
-    </assign>
-    <if variable="package_name" expression="!=" value="com.android.launcher3">
-        <action name="press" key="home"/>
-    </if>
+    <loop time="3">
+        <action name="orientation" value="n"/>
+        <assign variable="package_name">
+            <action name="get_current_package_name"/>
+        </assign>
+        <if variable="package_name" expression="!=" value="com.android.launcher3">
+            <action name="press" key="home"/>
+        </if>
+    </loop>
 </case>

@@ -9,7 +9,7 @@ from GlobalVariable import GlobalVariable
 from UiAutomator import UiAutomator
 from time import sleep
 from Logic import ExecutionModule
-
+from uiautomator import JsonRPCError
 
 
 class TestExecution(threading.Thread):
@@ -61,17 +61,23 @@ class TestExecution(threading.Thread):
         pass
 
     def __test_unit(self, case):
+        self.Print.info(case)
         self._exec.reset_variable()
         test_init = self.__find_test_initialization(case=case)
         if test_init:
             steps = Utility.test_case_parse(case_path=test_init)
             for step in steps:
-                self.Print.debug(self._exec.switch_step(step=step))
+                sleep(0.5)
+                self._exec.switch_step(step=step)
         else:
             self.Print.warm('Can not find test case initialization,skip.')
         steps = Utility.test_case_parse(case_path=case)
-        for step in steps:
-            self.Print.debug(self._exec.switch_step(step=step))
+        try:
+            for step in steps:
+                sleep(0.5)
+                self.Print.debug(self._exec.switch_step(step=step))
+        except JsonRPCError:
+            return False
     # ==========================================================
 
     def __find_test_initialization(self, case):

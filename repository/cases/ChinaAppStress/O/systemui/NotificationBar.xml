@@ -2,6 +2,7 @@
 <case>
     <!--<action name="open" key="notification"/>-->
     <action name="open" key="quick_settings"/>
-    <action name="random_click" id="com.android.systemui:id/tile_label"/>
+    <action name="random_click" id="com.android.systemui:id/tile_label" text="No SIM card"/>
+
 </case>
 
