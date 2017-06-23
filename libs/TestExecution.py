@@ -54,14 +54,18 @@ class TestExecution(threading.Thread):
         while time() < self.destiny_time:
             if self.__stop_flag:
                 break
-            self.__test_unit(choice(self.cases))
+            case = choice(self.cases)
+            result = self.__test_unit(case)
+            if result:
+                self.Print.info(case + ':Pass')
+            else:
+                self.Print.error(case + ':Fail')
             sleep(3)
 
     def __sequence_test(self):
         pass
 
     def __test_unit(self, case):
-        self.Print.info(case)
         self._exec.reset_variable()
         test_init = self.__find_test_initialization(case=case)
         if test_init:
@@ -77,7 +81,9 @@ class TestExecution(threading.Thread):
                 sleep(0.5)
                 self.Print.debug(self._exec.switch_step(step=step))
         except JsonRPCError:
+            self.Print.traceback()
             return False
+        return True
     # ==========================================================
 
     def __find_test_initialization(self, case):
